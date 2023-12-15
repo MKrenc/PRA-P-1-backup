@@ -15,6 +15,13 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.client.ClientProtocolException;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
+
 class Main {
     public static void main(String[] args) {
         String jsonFilePath = "src/main/resources/miasta.json";
@@ -33,6 +40,10 @@ class Main {
             switch (opcja1) {
                 case "P":
                     chosenCity =  wybierzMiastoIWyswietlDane(scan, miasta);
+                    WeatherService weatherService = new WeatherService();
+                    Coordinates coords = cityCoordinatesMap.get(chosenCity);
+                    String weatherData = weatherService.getWeatherData(String.valueOf(coords.getLat()), String.valueOf(coords.getLon()));
+                    System.out.println("Dane pogodowe dla " + chosenCity + ": " + weatherData);
                     break;
                 case "Z":
                     if (wybierzFormatIZapisz(scan, formatyZapisu)) {
@@ -52,7 +63,6 @@ class Main {
             System.out.println("Dostępne miasta: " + String.join(", ", miasta));
             miasto = scan.nextLine();
             if (miasta.contains(miasto)) {
-                // Pobierz i wyświetl dane pogodowe dla wybranego miasta
                 break;
             } else {
                 System.out.println("Nie można wyświetlić danych dla podanego miasta.");
