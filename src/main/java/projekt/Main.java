@@ -1,65 +1,60 @@
 package projekt;
 
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.ArrayList;
+import java.util.*;
 
 class Main {
     public static void main(String[] args) {
-        ArrayList<String> miasta = new ArrayList<String>();
-        miasta.add("Warszawa");
-        miasta.add("Szczecin");
-        miasta.add("Łódź");
-        miasta.add("Poznań");
-        miasta.add("Białystok"); // dodawanie miast, docelowo lista ma być wypełniana na podstawie czytanego pliku miasta.json, błąd z odczytem może być wykorzystany do realizacji kwestii obsługi wyjątków w programie
-        String opcja1;
-        String opcja2;
-        ArrayList<String> opcje2 = new ArrayList<String>();
-        opcje2.add("PDF");
-        opcje2.add("JSON");
-        opcje2.add("XML");
-        String miasto;
-        StringBuilder lanchuchProponowanychMiast = new StringBuilder();
-        for (String s : miasta) {
-            lanchuchProponowanychMiast.append(s); // kłopot ze złączeniem, przecinki ze spacją powinny być pomiędzy miastami
-        }
+        List<String> miasta = Arrays.asList("Warszawa", "Szczecin", "Łódź", "Poznań", "Białystok");
+        // W przyszłości, wczytywanie miast z pliku JSON i obsługa wyjątków związanych z odczytem
+
+        Set<String> formatyZapisu = new HashSet<>(Arrays.asList("PDF", "JSON", "XML"));
         Scanner scan = new Scanner(System.in);
-        boolean podano_miasto = false;
+
         while (true) {
             System.out.println("P-Podaj miasto, Z-Zakończ");
-            opcja1 = scan.nextLine();
-            if (Objects.equals(opcja1, "P")) {
-                do {
-                    System.out.print(String.format("Podaj miasto [%s]: ", lanchuchProponowanychMiast.toString()));
-                    miasto = scan.nextLine();
-                    if (!miasta.contains(miasto)) {
-                        System.out.println("Nie można wyświetlić danych dla podanego miasta.");
+            String opcja1 = scan.nextLine();
+
+            switch (opcja1) {
+                case "P":
+                    wybierzMiastoIWyswietlDane(scan, miasta);
+                    break;
+                case "Z":
+                    if (wybierzFormatIZapisz(scan, formatyZapisu)) {
+                        return; // Wyjście z programu po zapisie danych
                     }
-                    else {
-                        break;
-                    }
-                } while(true);
-                podano_miasto = true;
-            } else if (Objects.equals(opcja1, "Z")) {
-                if (podano_miasto) {
-                    do {
-                        System.out.print("Podaj format zapisu [P-PDF J-JSON X-XML]: ");
-                        opcja2 = scan.nextLine();
-                        if (!opcje2.contains(opcja2)) {
-                            System.out.println("Podano niewłaściwy format!");
-                        }
-                        else {
-                            System.out.println("Wykonywanie instrukcji");
-                            break;
-                        }
-                    } while(true);
-                }
-                break;
-            }
-            else {
-                System.out.println("Podano niedostępną opcję!"); // m.in. to rozwiązanie zastąpić zgłoszeniem wyjątku
+                    break;
+                default:
+                    System.out.println("Podano niedostępną opcję!"); // Można tutaj rzucić wyjątek, jeśli to konieczne
+                    break;
             }
         }
-        System.out.println("Program kończy działanie.");
+    }
+
+    private static void wybierzMiastoIWyswietlDane(Scanner scan, List<String> miasta) {
+        String miasto;
+        while (true) {
+            System.out.println("Dostępne miasta: " + String.join(", ", miasta));
+            miasto = scan.nextLine();
+            if (miasta.contains(miasto)) {
+                // Pobierz i wyświetl dane pogodowe dla wybranego miasta
+                break;
+            } else {
+                System.out.println("Nie można wyświetlić danych dla podanego miasta.");
+            }
+        }
+    }
+
+    private static boolean wybierzFormatIZapisz(Scanner scan, Set<String> formatyZapisu) {
+        while (true) {
+            System.out.print("Podaj format zapisu [P-PDF J-JSON X-XML]: ");
+            String opcja2 = scan.nextLine();
+            if (formatyZapisu.contains(opcja2)) {
+                System.out.println("Wykonywanie instrukcji zapisu w formacie " + opcja2);
+                // Zapisz dane w wybranym formacie
+                return true;
+            } else {
+                System.out.println("Podano niewłaściwy format!");
+            }
+        }
     }
 }
