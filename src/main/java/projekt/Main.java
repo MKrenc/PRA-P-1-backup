@@ -6,13 +6,22 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.client.ClientProtocolException;
+
 class Main {
     public static void main(String[] args) {
         String jsonFilePath = "src/main/resources/miasta.json";
+        String chosenCity;
         Map<String, Coordinates> cityCoordinatesMap = CityCoordinatesLoader.loadCityCoordinates(jsonFilePath);
         List<String> miasta = new ArrayList<>(cityCoordinatesMap.keySet());
-        // List<String> miasta = Arrays.asList("Warszawa", "Szczecin", "Łódź", "Poznań", "Białystok");
-        // W przyszłości, wczytywanie miast z pliku JSON i obsługa wyjątków związanych z odczytem
+        // W przyszłości być może obsługa wyjątków związanych z odczytem
 
         Set<String> formatyZapisu = new HashSet<>(Arrays.asList("PDF", "JSON", "XML"));
         Scanner scan = new Scanner(System.in);
@@ -23,11 +32,11 @@ class Main {
 
             switch (opcja1) {
                 case "P":
-                    wybierzMiastoIWyswietlDane(scan, miasta);
+                    chosenCity =  wybierzMiastoIWyswietlDane(scan, miasta);
                     break;
                 case "Z":
                     if (wybierzFormatIZapisz(scan, formatyZapisu)) {
-                        return; // Wyjście z programu po zapisie danych
+                        return;
                     }
                     break;
                 default:
@@ -37,7 +46,7 @@ class Main {
         }
     }
 
-    private static void wybierzMiastoIWyswietlDane(Scanner scan, List<String> miasta) {
+    private static String wybierzMiastoIWyswietlDane(Scanner scan, List<String> miasta) {
         String miasto;
         while (true) {
             System.out.println("Dostępne miasta: " + String.join(", ", miasta));
@@ -49,6 +58,7 @@ class Main {
                 System.out.println("Nie można wyświetlić danych dla podanego miasta.");
             }
         }
+        return miasto;
     }
 
     private static boolean wybierzFormatIZapisz(Scanner scan, Set<String> formatyZapisu) {
