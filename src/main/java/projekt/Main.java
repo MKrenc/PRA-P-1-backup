@@ -1,10 +1,17 @@
 package projekt;
 
 import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import java.io.File;
+import java.io.IOException;
 
 class Main {
     public static void main(String[] args) {
-        List<String> miasta = Arrays.asList("Warszawa", "Szczecin", "Łódź", "Poznań", "Białystok");
+        String jsonFilePath = "src/main/resources/miasta.json";
+        Map<String, Coordinates> cityCoordinatesMap = CityCoordinatesLoader.loadCityCoordinates(jsonFilePath);
+        List<String> miasta = new ArrayList<>(cityCoordinatesMap.keySet());
+        // List<String> miasta = Arrays.asList("Warszawa", "Szczecin", "Łódź", "Poznań", "Białystok");
         // W przyszłości, wczytywanie miast z pliku JSON i obsługa wyjątków związanych z odczytem
 
         Set<String> formatyZapisu = new HashSet<>(Arrays.asList("PDF", "JSON", "XML"));
@@ -58,3 +65,4 @@ class Main {
         }
     }
 }
+
