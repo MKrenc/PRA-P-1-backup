@@ -21,6 +21,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import java.io.StringReader;
+
 
 class Main {
     public static void main(String[] args) {
@@ -42,8 +47,16 @@ class Main {
                     chosenCity =  wybierzMiastoIWyswietlDane(scan, miasta);
                     WeatherService weatherService = new WeatherService();
                     Coordinates coords = cityCoordinatesMap.get(chosenCity);
-                    String weatherData = weatherService.getWeatherData(String.valueOf(coords.getLat()), String.valueOf(coords.getLon()));
-                    System.out.println("Dane pogodowe dla " + chosenCity + ": " + weatherData);
+                    String xmlString = weatherService.getWeatherData(String.valueOf(coords.getLat()), String.valueOf(coords.getLon()));
+                    try {
+                        WeatherData weatherData = XmlParser.parseWeatherData(xmlString);
+                        System.out.println("Temperatura: " + weatherData.getTemperature().getValue());
+                        System.out.println("Ciśnienie: " + weatherData.getPressure().getValue());
+                        System.out.println("Wilgotność: " + weatherData.getHumidity().getValue());
+                    } catch (JAXBException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println("Dane pogodowe dla " + chosenCity + ": " + xmlString);
                     break;
                 case "Z":
                     if (wybierzFormatIZapisz(scan, formatyZapisu)) {
