@@ -25,17 +25,14 @@ public class XmlParserExample {
 
         doc.getDocumentElement().normalize();
 
-        // Parsowanie temperatury
         NodeList temperatureNodeList = doc.getElementsByTagName("temperature");
         Element temperatureElement = (Element) temperatureNodeList.item(0);
         String temperature = temperatureElement.getAttribute("value");
 
-        // Parsowanie ciśnienia
         NodeList pressureNodeList = doc.getElementsByTagName("pressure");
         Element pressureElement = (Element) pressureNodeList.item(0);
         String pressure = pressureElement.getAttribute("value");
 
-        // Parsowanie wilgotności
         NodeList humidityNodeList = doc.getElementsByTagName("humidity");
         Element humidityElement = (Element) humidityNodeList.item(0);
         String humidity = humidityElement.getAttribute("value");
